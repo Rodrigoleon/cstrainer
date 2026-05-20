@@ -1,204 +1,146 @@
-Welcome to your new TanStack Start app! 
+# CS Interview Drill Trainer
 
-# Getting Started
+A JavaScript-first study companion for practicing CS interview fundamentals. The app is built around short, repeatable drills that help a developer move from "I recognize this" to "I can produce and explain this under pressure."
 
-To run this application:
+The current version focuses on curated practice instead of AI-generated questions. It includes runnable coding drills, multiple choice questions, code-reading explanations, trace-table exercises, and blank-file drills.
+
+## What It Does
+
+- Presents random or filtered interview drills by topic and drill type.
+- Runs JavaScript answers locally in the browser against deterministic test cases.
+- Uses a CodeMirror editor wrapper for coding practice, with line numbers and syntax highlighting.
+- Shows progressive hints before revealing the answer.
+- Shows explanations and reference solutions when a learner gives up.
+- Stores progress locally in the browser, including completed drills, attempts, streak, and accuracy.
+
+The goal is not just to check answers. The trainer should teach why a pattern matters, where the trick is, and what reusable idea the learner should carry forward.
+
+## Study Topics
+
+The curated drill bank currently covers:
+
+- Arrays
+- Objects
+- Strings
+- Sets & Maps
+- Recursion Basics
+- Big-O
+- Async JS
+- Mixed Interview
+
+Example drills include filtering arrays, frequency maps, two-sum, duplicate detection, recursion basics, async ordering, binary-number bit positions, and translating code into plain English.
+
+## How It Works
+
+The homepage renders the full trainer UI from `src/features/drills/DrillTrainer.tsx`.
+
+Core pieces:
+
+- `src/features/drills/drill-bank.ts` contains the curated question bank.
+- `src/features/drills/types.ts` defines the discriminated drill types.
+- `src/features/drills/code-runner.ts` runs submitted JavaScript in a browser Worker.
+- `src/features/drills/progress.ts` stores local progress under `cstrainer.progress.v1`.
+- `src/features/drills/CodeEditor.tsx` wraps CodeMirror so the editor can be swapped later.
+
+Postgres and Drizzle are scaffolded in the project, but the trainer does not use the database yet. V1 progress is browser-local only. The database layer is available for future account sync, shared question banks, or server-side study history.
+
+## Running Locally
+
+Install dependencies:
 
 ```bash
 npm install
+```
+
+Start the dev server:
+
+```bash
 npm run dev
 ```
 
-# Building For Production
+The app runs on:
 
-To build this application for production:
-
-```bash
-npm run build
+```text
+http://localhost:3000
 ```
 
-## Testing
+If you need to bind to a specific host or port:
 
-This project uses [Vitest](https://vitest.dev/) for testing. You can run the tests with:
+```bash
+npm run dev -- --host 127.0.0.1 --port 3002
+```
+
+## Testing And Checks
+
+Run the test suite:
 
 ```bash
 npm run test
 ```
 
-## Styling
-
-This project uses [Tailwind CSS](https://tailwindcss.com/) for styling.
-
-### Removing Tailwind CSS
-
-If you prefer not to use Tailwind CSS:
-
-1. Remove the demo pages in `src/routes/demo/`
-2. Replace the Tailwind import in `src/styles.css` with your own styles
-3. Remove `tailwindcss()` from the plugins array in `vite.config.ts`
-4. Uninstall the packages: `npm install @tailwindcss/vite tailwindcss -D`
-
-## Linting & Formatting
-
-This project uses [Biome](https://biomejs.dev/) for linting and formatting. The following scripts are available:
-
+Run Biome checks:
 
 ```bash
-npm run lint
-npm run format
 npm run check
 ```
 
+Format files:
 
-
-## Routing
-
-This project uses [TanStack Router](https://tanstack.com/router) with file-based routing. Routes are managed as files in `src/routes`.
-
-### Adding A Route
-
-To add a new route to your application just add a new file in the `./src/routes` directory.
-
-TanStack will automatically generate the content of the route file for you.
-
-Now that you have two routes you can use a `Link` component to navigate between them.
-
-### Adding Links
-
-To use SPA (Single Page Application) navigation you will need to import the `Link` component from `@tanstack/react-router`.
-
-```tsx
-import { Link } from "@tanstack/react-router";
+```bash
+npm run format
 ```
 
-Then anywhere in your JSX you can use it like so:
+Build for production:
 
-```tsx
-<Link to="/about">About</Link>
+```bash
+npm run build
 ```
 
-This will create a link that will navigate to the `/about` route.
+Note: the Cloudflare/Wrangler build may print a sandbox-related log-file warning in restricted local environments. If the command exits 0 and both client and server bundles are produced, the build completed.
 
-More information on the `Link` component can be found in the [Link documentation](https://tanstack.com/router/v1/docs/framework/react/api/router/linkComponent).
+## Tech Stack
 
-### Using A Layout
+- React 19
+- TanStack Start and TanStack Router
+- TanStack Query
+- Tailwind CSS
+- CodeMirror 6
+- Vitest and Testing Library
+- Biome
+- Drizzle ORM and PostgreSQL scaffold
+- Cloudflare deployment scaffold
 
-In the File Based Routing setup the layout is located in `src/routes/__root.tsx`. Anything you add to the root route will appear in all the routes. The route content will appear in the JSX where you render `{children}` in the `shellComponent`.
+## Adding Drills
 
-Here is an example layout that includes a header:
+Add new curated drills in `src/features/drills/drill-bank.ts`.
 
-```tsx
-import { HeadContent, Scripts, createRootRoute } from '@tanstack/react-router'
+Each drill includes:
 
-export const Route = createRootRoute({
-  head: () => ({
-    meta: [
-      { charSet: 'utf-8' },
-      { name: 'viewport', content: 'width=device-width, initial-scale=1' },
-      { title: 'My App' },
-    ],
-  }),
-  shellComponent: ({ children }) => (
-    <html lang="en">
-      <head>
-        <HeadContent />
-      </head>
-      <body>
-        <header>
-          <nav>
-            <Link to="/">Home</Link>
-            <Link to="/about">About</Link>
-          </nav>
-        </header>
-        {children}
-        <Scripts />
-      </body>
-    </html>
-  ),
-})
-```
+- `id`
+- `title`
+- `topic`
+- `level`
+- `type`
+- `concept`
+- `prompt`
+- `hints`
+- `explanation`
 
-More information on layouts can be found in the [Layouts documentation](https://tanstack.com/router/latest/docs/framework/react/guide/routing-concepts#layouts).
+Runnable code drills also include:
 
-## Server Functions
+- `signature`
+- `starter`
+- `tests`
+- `referenceSolution`
 
-TanStack Start provides server functions that allow you to write server-side code that seamlessly integrates with your client components.
+Keep explanations teaching-oriented. A good explanation should say what the pattern is, why the exercise matters, and any language-specific trick the learner is expected to discover.
 
-```tsx
-import { createServerFn } from '@tanstack/react-start'
+## Future Direction
 
-const getServerTime = createServerFn({
-  method: 'GET',
-}).handler(async () => {
-  return new Date().toISOString()
-})
+Likely next steps:
 
-// Use in a component
-function MyComponent() {
-  const [time, setTime] = useState('')
-  
-  useEffect(() => {
-    getServerTime().then(setTime)
-  }, [])
-  
-  return <div>Server time: {time}</div>
-}
-```
-
-## API Routes
-
-You can create API routes by using the `server` property in your route definitions:
-
-```tsx
-import { createFileRoute } from '@tanstack/react-router'
-import { json } from '@tanstack/react-start'
-
-export const Route = createFileRoute('/api/hello')({
-  server: {
-    handlers: {
-      GET: () => json({ message: 'Hello, World!' }),
-    },
-  },
-})
-```
-
-## Data Fetching
-
-There are multiple ways to fetch data in your application. You can use TanStack Query to fetch data from a server. But you can also use the `loader` functionality built into TanStack Router to load the data for a route before it's rendered.
-
-For example:
-
-```tsx
-import { createFileRoute } from '@tanstack/react-router'
-
-export const Route = createFileRoute('/people')({
-  loader: async () => {
-    const response = await fetch('https://swapi.dev/api/people')
-    return response.json()
-  },
-  component: PeopleComponent,
-})
-
-function PeopleComponent() {
-  const data = Route.useLoaderData()
-  return (
-    <ul>
-      {data.results.map((person) => (
-        <li key={person.name}>{person.name}</li>
-      ))}
-    </ul>
-  )
-}
-```
-
-Loaders simplify your data fetching logic dramatically. Check out more information in the [Loader documentation](https://tanstack.com/router/latest/docs/framework/react/guide/data-loading#loader-parameters).
-
-# Demo files
-
-Files prefixed with `demo` can be safely deleted. They are there to provide a starting point for you to play around with the features you've installed.
-
-# Learn More
-
-You can learn more about all of the offerings from TanStack in the [TanStack documentation](https://tanstack.com).
-
-For TanStack Start specific documentation, visit [TanStack Start](https://tanstack.com/start).
+- Lazy-load CodeMirror so non-code drills do not pay the editor bundle cost.
+- Add accounts and sync progress through Postgres.
+- Add richer spaced repetition and daily study plans.
+- Add more curated language tracks.
+- Build the later codebase-learning companion: paste code or link a PR, then explain code structure and concepts on hover.
