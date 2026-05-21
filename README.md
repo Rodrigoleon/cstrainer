@@ -64,10 +64,22 @@ The app runs on:
 http://localhost:3000
 ```
 
-If you need to bind to a specific host or port:
+To make the app available to other devices on the same LAN:
 
 ```bash
-npm run dev -- --host 127.0.0.1 --port 3002
+npm run dev:lan
+```
+
+That binds Vite to all network interfaces on port `3017`. From another device on the same network, open:
+
+```text
+http://<your-computer-lan-ip>:3017
+```
+
+For example, if your machine is `192.168.1.42`, use:
+
+```text
+http://192.168.1.42:3017
 ```
 
 ## Testing And Checks
